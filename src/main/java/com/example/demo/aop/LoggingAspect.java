@@ -21,7 +21,7 @@ public class LoggingAspect {
         this.counter = counter;
     }
 
-    @Around("execution(* com.example.shop..*(..)) && (@within(org.springframework.web.bind.annotation.RestController) || @within(org.springframework.stereotype.Service))")
+    @Around("execution(* com.example.demo..*(..)) && (@within(org.springframework.web.bind.annotation.RestController) || @within(org.springframework.stereotype.Service))")
     public Object logMethodCall(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().toShortString();
         Object[] args = joinPoint.getArgs();

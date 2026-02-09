@@ -1,40 +1,51 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ProductRequestDTO;
+import com.example.demo.dto.ProductResponseDTO;
 import com.example.demo.entity.Product;
+import com.example.demo.mapper.ProductMapper;
 import com.example.demo.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService service;
+    private final ProductMapper mapper;
 
-    public ProductController(ProductService service) {
+    public ProductController(ProductService service, ProductMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
-    public List<Product> getAll() {
-        return service.getAll();
+    public List<ProductResponseDTO> getAll() {
+        return mapper.toDtoList(service.getAll());
     }
 
     @GetMapping("/{id}")
-    public Product getById(@PathVariable Long id) {
-        return service.getById(id);
+    public ProductResponseDTO getById(@PathVariable Long id) {
+        return mapper.toDto(service.getById(id));
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return service.create(product);
+    public ProductResponseDTO createProduct(@RequestBody ProductRequestDTO requestDTO) {
+
+        Product createdProduct = service.create(mapper.toEntity(requestDTO));
+
+        return mapper.toDto(createdProduct);
     }
 
     @PutMapping("/{id}")
-    public Product updateById(@PathVariable Long id, @RequestBody Product product) {
-        return service.update(id, product);
+    public ProductResponseDTO updateById(@PathVariable Long id, @RequestBody ProductRequestDTO requestDTO) {
+
+        Product updatedProduct = service.update(id, mapper.toEntity(id, requestDTO));
+
+        return mapper.toDto(updatedProduct);
     }
 
     @DeleteMapping("/{id}")
